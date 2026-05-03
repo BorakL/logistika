@@ -51,12 +51,12 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     }  
   })
 
-  const addDostavnaLinijaHandler = async (newDostavnaLinija: DostavnaLinija) => {
+  const addDostavnaLinijaHandler = async () => {
     try{
       //Dodajemo novu dostavnu liniju u bazu
-      setDostavneLinije(prev => {
-        return [...prev, {...newDostavnaLinija, id:Date.now().toString()}]
-      })
+      // setDostavneLinije(prev => {
+      //   return [...prev, {...newDostavnaLinija, id:Date.now().toString()}]
+      // })
     }catch(error){
       console.log("Greška pri dodavanju ture: ", error)
     }
@@ -108,10 +108,11 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     }
   }
 
-  const getVozaci = (linija: DostavnaLinija): <Vozac[]> => {
-    if(linija.smene){
-      
+  const getVozaci = (linija: DostavnaLinija):Vozac[] => {
+    if(linija && linija.smene){
+      return Object.values(linija.smene)
     }
+    return [];
   }
 
 
@@ -142,9 +143,8 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                 </div>
                 <div className="mb-2">
                   <div><b>{linija.vozilo}</b></div>
-                  <div><b>{vozaci?.id?.ime} {linija.vozaci?.["1"]?.prezime}</b></div>
-                  <div><b>{linija.vozaci?.["1"]?.ime} {linija.vozaci?.["1"]?.prezime}</b></div>
-                  <div><b>{linija.vozaci?.["2"]?.ime} {linija.vozaci?.["2"]?.prezime}</b></div>
+                  <div><b>{getVozaci(linija)?.[0]?.ime || ""} {getVozaci(linija)?.[0]?.prezime || ""}</b></div>
+                  <div><b>{getVozaci(linija)?.[1]?.ime || ""} {getVozaci(linija)?.[1]?.prezime || ""}</b></div>
                 </div>
                 <div className="mb-2">
                   <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id,e.target.value,1)}>
