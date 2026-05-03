@@ -51,11 +51,11 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     }  
   })
 
-  const addDostavnaLinijaHandler = async () => {
+  const addDostavnaLinijaHandler = async (newDostavnaLinija: DostavnaLinija) => {
     try{
       //Dodajemo novu dostavnu liniju u bazu
       setDostavneLinije(prev => {
-        return [...prev, {id:Date.now().toString(), klinike:""}]
+        return [...prev, {...newDostavnaLinija, id:Date.now().toString()}]
       })
     }catch(error){
       console.log("Greška pri dodavanju ture: ", error)
@@ -89,10 +89,10 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     try{
         //Izvrši promenu u bazi
         const modifiedTure: DostavnaLinija[] = dostavneLinije.map((linija:DostavnaLinija) => {
-        if(linija.id===linijaId && linija.vozaci?.[shift]?.id !== vozacId ){
+        if(linija.id===linijaId && linija.smene[shift].id !== vozacId ){
           const vozac = vozaci.find(v => v.id===vozacId)
           if(vozac){
-            return {...linija, vozaci: {...linija.vozaci, [shift]: vozac}}
+            return {...linija, smene: {...linija.smene, [shift]: vozac.id}}
           }
         }
         return linija;
@@ -105,6 +105,12 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
       }
     }catch(error){
       console.log("Problem prilikom promene vozača: ", error)
+    }
+  }
+
+  const getVozaci = (linija: DostavnaLinija): <Vozac[]> => {
+    if(linija.smene){
+      
     }
   }
 
@@ -136,6 +142,7 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                 </div>
                 <div className="mb-2">
                   <div><b>{linija.vozilo}</b></div>
+                  <div><b>{vozaci?.id?.ime} {linija.vozaci?.["1"]?.prezime}</b></div>
                   <div><b>{linija.vozaci?.["1"]?.ime} {linija.vozaci?.["1"]?.prezime}</b></div>
                   <div><b>{linija.vozaci?.["2"]?.ime} {linija.vozaci?.["2"]?.prezime}</b></div>
                 </div>

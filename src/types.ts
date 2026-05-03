@@ -3,15 +3,15 @@ export interface Vozac {
   ime: string,
   prezime: string
 }
-
-export interface Vozaci {
-  1?: Vozac,
-  2?: Vozac
+export interface Smene {
+  1: Vozac,
+  2: Vozac
 }
 
 export interface DostavnaLinija {
   id: string;
+  broj: string;
   klinike: string;
   vozilo?: string,
-  vozaci?: Vozaci
+  smene: Smene
 }
