@@ -3,9 +3,14 @@ export interface Vozac {
   ime: string,
   prezime: string
 }
+
+export interface Vozilo {
+  id: string,
+  naziv: string
+}
 export interface Smene {
-  1: Vozac,
-  2: Vozac
+  0?: string,
+  1?: string
 }
 
 export interface DostavnaLinija {
@@ -13,5 +18,8 @@ export interface DostavnaLinija {
   broj: string;
   klinike: string;
   vozilo?: string,
-  smene: Smene
+  smene: {
+    0: string;
+    1: string
+  }
 }

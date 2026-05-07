@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Vozac } from "../types";
+import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc
+} from "firebase/firestore"
+
+import { db } from "../firebase"
 
 const Vozaci = () => {
     const[vozaci, setVozaci] = useState<Vozac[]>([]);
@@ -13,6 +23,16 @@ const Vozaci = () => {
         const fetchVozaci = async () => {
             try{
                 //Fečujemo Vozače iz baze
+                const snapshot = await getDocs(collection(db, "vozaci"))
+                const vozaciData: Vozac[] = snapshot.docs.map(
+                    (doc: QueryDocumentSnapshot<DocumentData>) => ({
+                        id: doc.id,
+                        ...(doc.data() as Omit<Vozac, "id">)
+                    })
+                )
+                if(vozaciData){
+                    setVozaci(vozaciData)
+                }
             }catch(error){
                 console.log("Problem sa učitavanjem podataka o transportu: ", error)
             }
@@ -22,6 +42,11 @@ const Vozaci = () => {
 
     const addVozac = async(data: {ime:string, prezime:string}) => {
         try{
+            //Dodajemo vozaca u bazu
+            await addDoc(collection(db, "vozaci"), {
+                ime: data.ime,
+                prezime: data.prezime
+            })
             const noviVozac: Vozac = {
                 id: Date.now().toString(),
                 ime: data.ime,
@@ -29,7 +54,6 @@ const Vozaci = () => {
             }
             const updatedVozaci = [...vozaci, noviVozac];
             setVozaci(updatedVozaci);
-            //Dodajemo vozaca u bazu
             vozacForm.reset();
         }catch(error){
             console.log("Problem prilikom dodavanja novog vozaca: ", error)
@@ -38,13 +62,10 @@ const Vozaci = () => {
 
     const removeVozac = async (id: string) => {
         try {
+            // Brišemo vozača iz baze
+            await deleteDoc(doc(db, "vozaci", id))
             const updatedVozaci = vozaci.filter(v => v.id !== id);
             setVozaci(updatedVozaci);
-            
-            // Brišemo vozača iz baze
-            
-            console.log("Vozač uspešno obrisan");
-            
         } catch (error) {
             console.log("Greška prilikom brisanja vozača: ", error);
             alert("Došlo je do greške prilikom brisanja vozača.");

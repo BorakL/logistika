@@ -1,19 +1,30 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { db } from "../firebase";
+import { addDoc, collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { Vozilo } from "../types";
 
 const Vozila = () => {
-    const[vozila, setVozila] = useState<string[]>([])
+    const[vozila, setVozila] = useState<Vozilo[]>([])
     const voziloForm = useForm<{
-        tablice: string
+        naziv: string
     }>();
     
     useEffect(() => {
         const fetchVozila = async () => {
             try{
                 //Fečujemo Vozila iz baze
-                // if(transport){
-                //     setVozila(transport.vozila);
-                // }
+                const snapshot = await getDocs(collection(db, "vozila"));
+                const vozilaData = snapshot.docs.map(doc => {
+                    const data = doc.data()
+                    return {
+                        id: doc.id,
+                        naziv: data.naziv
+                    } as Vozilo
+                })
+                if(vozilaData){
+                    setVozila(vozilaData)
+                }
             }catch(error){
                 console.log("Problem sa učitavanjem podataka o transportu: ", error)
             }
@@ -21,36 +32,39 @@ const Vozila = () => {
         fetchVozila();
     },[])
 
-    const addVozilo = async (data: {tablice:string}) => {
+    const addVozilo = async (data: {naziv:string}) => {
         try{
-            const updatedVozila = [...vozila, data.tablice];
-            setVozila(updatedVozila);
             //Dodajemo vozilo u bazu
+            await addDoc(collection(db, "vozila"), {
+                naziv: data.naziv
+            })
+            const novoVozilo: Vozilo = {
+                id: Date.now().toString(),
+                naziv: data.naziv
+            }
+            if(vozila.some(v => v.naziv===novoVozilo.naziv)){
+                throw Error("Vozilo sa ovom registracijom već postoji u bazi")
+                return;
+            }
+            const updatedVozila = [...vozila, novoVozilo];
+            setVozila(updatedVozila);
             voziloForm.reset();
         }catch(error){
             console.log("Problem prilikom dodavanja novog vozila: ", error)
         }
     }
+    
 
-    const removeVozilo = async(tablice:string) => {
+    const removeVozilo = async(id:string) => {
         try{
-            const updatedVozila = vozila.filter(v => v!==tablice);
+            //Obriši vozilo iz baze
+            await deleteDoc(doc(db, "vozilo", id))
+            const updatedVozila = vozila.filter(v => v.id===id);
             setVozila(updatedVozila);
-            //Obriši vozača iz baze
-            //Fečuj dostavne ture
-            
-            // U stejtu ture vidi da li ima neko sa tablicama koje se brišu i obriši to vozilo
-            // if(ture.some(t => t.vozilo===tablice)){
-            //     const updatedTure = ture.map((t) => {
-            //         return t.vozilo===tablice ? {...t, vozilo:""} : t
-            //     })
-            //     await window.electronApp.writeJsonFile('dostavneTure.json', {...dostavneTure, ture: updatedTure});
-            // }
         }catch(error){
             console.log("Greška prilikom brisanja vozila: ", error)
         }
     }
-
 
     return(
         <div className="container py-4">
@@ -60,12 +74,12 @@ const Vozila = () => {
                     {vozila.map((vozilo) => 
                         <li 
                             className="list-group-item d-flex justify-content-between align-items-center" 
-                            key={vozilo}
+                            key={vozilo.id}
                         >
-                            <div className="me-3">{vozilo}</div>
+                            <div className="me-3">{vozilo.naziv}</div>
                             <button 
                                 className="btn btn-sm btn-outline-danger"
-                                onClick={() => removeVozilo(vozilo)}
+                                onClick={() => removeVozilo(vozilo.id)}
                             >
                                 <i className="bi bi-trash"></i> Obriši
                             </button>
@@ -79,19 +93,19 @@ const Vozila = () => {
                                 <div className="col">
                                     <input 
                                         type="text"
-                                        className={`form-control ${voziloForm.formState.errors.tablice ? 'is-invalid' : ''}`} 
-                                        {...voziloForm.register('tablice', {
+                                        className={`form-control ${voziloForm.formState.errors.naziv ? 'is-invalid' : ''}`} 
+                                        {...voziloForm.register('naziv', {
                                             required:'Obavezno polje!', 
                                             validate: (value) => {
-                                                const postoji = vozila.some(vozilo => vozilo === value);
+                                                const postoji = vozila.some(vozilo => vozilo.id === value);
                                                 return !postoji || 'Vozilo sa ovom registracijom već postoji u bazi podataka!'
                                             }
                                         })} 
                                         placeholder="Registracija"
                                     />
-                                    {voziloForm.formState.errors.tablice && (
+                                    {voziloForm.formState.errors.naziv && (
                                         <div className="invalid-feedback">
-                                            {voziloForm.formState.errors.tablice.message}
+                                            {voziloForm.formState.errors.naziv.message}
                                         </div>
                                     )}
                                 </div>
