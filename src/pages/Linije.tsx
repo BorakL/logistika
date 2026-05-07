@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { FaTruck } from "react-icons/fa";
-import { DostavnaLinija, Vozac } from "../types";
+import { DostavnaLinija, Vozac, Vozilo } from "../types";
 import { useConfirm } from "../context/confirmContext";
 import { collection, deleteDoc, doc, DocumentData, getDocs, QueryDocumentSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
@@ -10,6 +10,7 @@ import { db } from "../firebase";
 export default function ListaDostavnihTura() {
   const [dostavneLinije, setDostavneLinije] = useState<DostavnaLinija[]>([]);
   const [vozaci, setVozaci] = useState<Vozac[]>([])
+  const [vozila, setVozila] = useState<Vozilo[]>([])
   const [loading, setLoading] = useState(true);
   const {confirm} = useConfirm();
 
@@ -17,7 +18,6 @@ export default function ListaDostavnihTura() {
     const fetchData = async () => {
       try {
         //Vadimo dostavne linije
-
         const snapshotLinije = await getDocs(collection(db, "linije"))
         const linijeData: DostavnaLinija[] = snapshotLinije.docs.map(
           (doc: QueryDocumentSnapshot<DocumentData>) => ({
@@ -29,6 +29,30 @@ export default function ListaDostavnihTura() {
           setDostavneLinije(linijeData)
         }
 
+        //Fečujemo Vozače iz baze
+        const snapshotVozaci = await getDocs(collection(db, "vozaci"))
+        const vozaciData: Vozac[] = snapshotVozaci.docs.map(
+            (doc: QueryDocumentSnapshot<DocumentData>) => ({
+                id: doc.id,
+                ...(doc.data() as Omit<Vozac, "id">)
+            })
+        )
+        if(vozaciData){
+          setVozaci(vozaciData)
+        }
+
+        //Fečujemo Vozila iz baze
+        const snapshot = await getDocs(collection(db, "vozila"));
+        const vozilaData = snapshot.docs.map(doc => {
+            const data = doc.data()
+            return {
+                id: doc.id,
+                naziv: data.naziv
+            } as Vozilo
+        })
+        if(vozilaData){
+          setVozila(vozilaData)
+        } 
       } catch (error) {
         console.error("Greška pri učitavanju podataka:", error);
       } finally {
@@ -38,35 +62,13 @@ export default function ListaDostavnihTura() {
     fetchData();
   }, []);
 
-
-    useEffect(() => {
-      const fetchVozaci = async () => {
-          try{
-              //Fečujemo Vozače iz baze
-              const snapshot = await getDocs(collection(db, "vozaci"))
-              const vozaciData: Vozac[] = snapshot.docs.map(
-                  (doc: QueryDocumentSnapshot<DocumentData>) => ({
-                      id: doc.id,
-                      ...(doc.data() as Omit<Vozac, "id">)
-                  })
-              )
-              if(vozaciData){
-                  setVozaci(vozaciData)
-              }
-          }catch(error){
-              console.log("Problem sa učitavanjem podataka o transportu: ", error)
-          }
-      }
-      fetchVozaci();
-  },[])
-
 const removeDostavnaLinijaHandler = async (message:string, id:string) => 
   confirm({
     message: message,
     onConfirm: async() => {
       try{
         //Obriši dostavnu liniju u bazi
-        await deleteDoc(doc(db, "linija", id))
+        await deleteDoc(doc(db, "linije", id))
         setDostavneLinije(prev => { 
           return [...prev.filter(t => t.id!==id)] 
         })
@@ -79,9 +81,11 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
   const vozaciMap = Object.fromEntries(
     vozaci.map(v => [v.id, v])
   )
+  const vozilaMap = Object.fromEntries(
+    vozila.map(v => [v.id, v])
+  )
 
-
-  if (loading || !dostavneLinije) return <p>Učitavanje...</p>
+  if (loading ) return <p>Učitavanje...</p>
 
   return (
     <div className="container py-4">
@@ -110,6 +114,9 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                   <div><b>{linija.vozilo}</b></div>
                   <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
                   <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
+                </div>
+                <div className="mb-2">
+                  <div>Vozilo: {vozilaMap[linija.vozilo || ""]?.naziv}</div>
                 </div>
               </div>
             </div>
