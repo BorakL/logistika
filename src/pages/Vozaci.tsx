@@ -1,81 +1,42 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Vozac } from "../types";
-import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc
-} from "firebase/firestore"
-
-import { db } from "../firebase"
+import { useData } from "../context/dataContext";
 
 const Vozaci = () => {
-    const[vozaci, setVozaci] = useState<Vozac[]>([]);
+    const {
+        vozaci,
+        deleteVozac,
+        addVozac,
+        loading
+    } = useData()
+
+    // const[vozaci, setVozaci] = useState<Vozac[]>([]);
     const vozacForm = useForm<{
         ime: string;
         prezime: string
     }>();
-    
-    useEffect(() => {
-        const fetchVozaci = async () => {
-            try{
-                //Fečujemo Vozače iz baze
-                const snapshot = await getDocs(collection(db, "vozaci"))
-                const vozaciData: Vozac[] = snapshot.docs.map(
-                    (doc: QueryDocumentSnapshot<DocumentData>) => ({
-                        id: doc.id,
-                        ...(doc.data() as Omit<Vozac, "id">)
-                    })
-                )
-                if(vozaciData){
-                    setVozaci(vozaciData)
-                }
-            }catch(error){
-                console.log("Problem sa učitavanjem podataka o transportu: ", error)
-            }
-        }
-        fetchVozaci();
-    },[])
 
-    const addVozac = async(data: {ime:string, prezime:string}) => {
+    const addVozacHandler = (data: {ime:string, prezime:string}) => {
         try{
-            //Dodajemo vozaca u bazu
-            await addDoc(collection(db, "vozaci"), {
-                ime: data.ime,
-                prezime: data.prezime
-            })
-            const noviVozac: Vozac = {
-                id: Date.now().toString(),
-                ime: data.ime,
-                prezime: data.prezime
-            }
-            const updatedVozaci = [...vozaci, noviVozac];
-            setVozaci(updatedVozaci);
-            vozacForm.reset();
+            addVozac(data.ime, data.prezime)
         }catch(error){
-            console.log("Problem prilikom dodavanja novog vozaca: ", error)
+            console.log(error)
         }
     }
 
-    const removeVozac = async (id: string) => {
-        try {
-            // Brišemo vozača iz baze
-            await deleteDoc(doc(db, "vozaci", id))
-            const updatedVozaci = vozaci.filter(v => v.id !== id);
-            setVozaci(updatedVozaci);
-        } catch (error) {
-            console.log("Greška prilikom brisanja vozača: ", error);
-            alert("Došlo je do greške prilikom brisanja vozača.");
+    const removeVozacHandler = (id:string) => {
+        try{
+            deleteVozac(id)
+        }catch(error){
+            console.log(error)
         }
-    };
+    }
 
     return(
         <div className="container py-4">
             <div className="mb-5">
                 <h2>Vozači</h2>
+                {loading ? <b>Loading...</b> : null}
                 <ul className="list-group mb-3">
                     {vozaci.map((vozac: Vozac) => 
                         <li 
@@ -87,7 +48,7 @@ const Vozaci = () => {
                             </div>
                             <button 
                                 className="btn btn-sm btn-outline-danger"
-                                onClick={() => removeVozac(vozac.id)}
+                                onClick={() => removeVozacHandler(vozac.id)}
                             >
                                 <i className="bi bi-trash"></i> Obriši
                             </button>
@@ -95,7 +56,7 @@ const Vozaci = () => {
                 </ul>
                 <div className="card">
                     <div className="card-body">
-                        <form onSubmit={vozacForm.handleSubmit(addVozac)}>
+                        <form onSubmit={vozacForm.handleSubmit(addVozacHandler)}>
                             <div className="row g-3">
                                 <div className="col-md-6">
                                     <input

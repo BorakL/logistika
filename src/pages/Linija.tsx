@@ -1,68 +1,30 @@
-import { useEffect, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { FaTruck } from "react-icons/fa";
-import { DostavnaLinija, Smene, Vozac, Vozilo } from "../types";
 import { useConfirm } from "../context/confirmContext";
-import { addDoc, collection, deleteDoc, doc, DocumentData, getDocs, QueryDocumentSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import { useParams } from "react-router";
+import { useData } from "../context/dataContext";
 
 
-export default function ListaDostavnihTura() {
-  const [dostavneLinije, setDostavneLinije] = useState<DostavnaLinija[]>([]);
-  const [vozaci, setVozaci] = useState<Vozac[]>([]);
-  const [vozila, setVozila] = useState<Vozilo[]>([])
-  const [loading, setLoading] = useState(true);
+export default function Linija() {
   const {confirm} = useConfirm();
+  const {id} = useParams(); 
+  const {
+    linije,
+    vozaci,
+    vozila,
+    loading,
+    deleteLinija,
+    updateLinija
+  } = useData();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        //Vadimo dostavne linije, vozila i vozače iz baze
+  const linija = linije.find(l => l.id===id);
+  if(!linija){
+    return <p>Linija nije pronađena</p>
+  }
 
-        const snapshotVozila = await getDocs(collection(db, "vozila"));
-        const vozilaData = snapshotVozila.docs.map(doc => {
-            const data = doc.data()
-            return {
-                id: doc.id,
-                naziv: data.naziv
-            } as Vozilo
-        })
-        if(vozilaData){
-          setVozila(vozilaData)
-        }
-        
-        const snapshotVozaci = await getDocs(collection(db, "vozaci"))
-        const vozaciData: Vozac[] = snapshotVozaci.docs.map(
-            (doc: QueryDocumentSnapshot<DocumentData>) => ({
-                id: doc.id,
-                ...(doc.data() as Omit<Vozac, "id">)
-            })
-        )
-        if(vozaciData){
-          const sortedVozaci = vozaciData.sort((a:Vozac, b:Vozac) => a.prezime.localeCompare(b.prezime))
-            setVozaci(sortedVozaci)
-        }
-
-        const snapshotLinije = await getDocs(collection(db, "linije"))
-        const linijeData: DostavnaLinija[] = snapshotLinije.docs.map(
-          (doc: QueryDocumentSnapshot<DocumentData>) => ({
-            id: doc.id,
-            ...(doc.data() as Omit<DostavnaLinija, "id">)
-          })
-        )
-        if(linijeData){
-          setDostavneLinije(linijeData)
-        }
-
-      } catch (error) {
-        console.error("Greška pri učitavanju podataka:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  if(loading) {
+    return <p>Loading...</p>
+  }
 
 const removeDostavnaLinijaHandler = async (message:string, id:string) => 
   confirm({
@@ -70,12 +32,9 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     onConfirm: async() => {
       try{
         //Obriši dostavnu liniju u bazi
-        await deleteDoc(doc(db, "linija", id))
-        setDostavneLinije(prev => { 
-          return [...prev.filter(t => t.id!==id)] 
-        })
+        deleteLinija(id)
       }catch(error){
-        console.log("Greška pri brisanju linije za razvoz: ", error)
+        console.log(error)
       }
     }  
   })
@@ -103,68 +62,35 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
   //   }
   // }
 
-  // const changeDostavnaLinijaVozilo = async (linijaId:string, newVozilo:string) => {
-  //   try{
-  //   //   await window.electronApp.zameniVoziloSaProverom(turaId, newVozilo);
-  //   //
-  //     setDostavneLinije(prev => {
-  //       if (!prev) return prev;
-        
-  //       const updatedLinija = prev.map(linija => {
-  //         if (linija.id === linijaId) {
-  //           return {
-  //             ...linija,
-  //             vozilo: newVozilo
-  //           };
-  //         }
-  //         return linija;
-  //       });
-  //       return updatedLinija;
-  //     });
-  //   } catch(error){
-  //     console.log("Greška prilikom promene vozila: ", error)
-  //   }
-  // }
 
-  // const changeDostavnaLinijaVozac = async (linijaId: string, vozacId:string, shift:1|2) => {
-  //   try{
-  //       //Izvrši promenu u bazi
-  //       const modifiedTure: DostavnaLinija[] = dostavneLinije.map((linija:DostavnaLinija) => {
-  //       if(linija.id===linijaId && linija.smene[shift].id !== vozacId ){
-  //         const vozac = vozaci.find(v => v.id===vozacId)
-  //         if(vozac){
-  //           return {...linija, smene: {...linija.smene, [shift]: vozac.id}}
-  //         }
-  //       }
-  //       return linija;
-  //     });
-  //     if(modifiedTure){
-  //       setDostavneLinije(prev => {
-  //         if (!prev) return prev;
-  //         return modifiedTure
-  //       })
-  //     }
-  //   }catch(error){
-  //     console.log("Problem prilikom promene vozača: ", error)
-  //   }
-  // }
-
-  const getVozaci = (linija: DostavnaLinija):Vozac[] => {
-    if(linija && linija.smene){
-      return Object.values(linija.smene)
+  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:1|2) => {
+    try{
+      updateLinija(id, {smene: {...linija.smene, [shift]:vozacId}})
+    }catch(error){
+      console.log(error)
     }
-    return [];
   }
 
+  const changeDostavnaLinijaVozilo = async (id: string, voziloNaziv:string) => {
+  try{
+    updateLinija(id, {vozilo: voziloNaziv})
+  }catch(error){
+    console.log(error)
+  }
+}
 
-  if (loading || !dostavneLinije) return <p>Učitavanje...</p>
+  const vozaciMap = Object.fromEntries(
+    vozaci.map(v => [v.id, v])
+  )
+  const vozilaMap = Object.fromEntries(
+    vozila.map(v => [v.id, v])
+  )
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Linije za razvoz</h2>
+      <h2 className="mb-4">Linija za razvoz</h2>
 
       <div className="row">
-        {dostavneLinije.map((linija) => (
           <div key={linija.id} className="col-md-6 mb-4">
             <div className="card shadow-sm">
               <div className="card-header d-flex justify-content-between align-items-center">
@@ -184,11 +110,14 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                 </div>
                 <div className="mb-2">
                   <div><b>{linija.vozilo}</b></div>
-                  <div><b>{getVozaci(linija)?.[0]?.ime || ""} {getVozaci(linija)?.[0]?.prezime || ""}</b></div>
-                  <div><b>{getVozaci(linija)?.[1]?.ime || ""} {getVozaci(linija)?.[1]?.prezime || ""}</b></div>
+                  <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
+                  <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
                 </div>
-                {/* <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id,e.target.value,1)}>
+                <div className="mb-2">
+                  <div>Vozilo: {vozilaMap[linija.vozilo || ""]?.naziv}</div>
+                </div>
+                <div className="mb-2">
+                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 1)}>
                     <option>Vozač 1</option>
                     {vozaci.map(vozac => <option 
                                             key={vozac.id} 
@@ -199,9 +128,9 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                                 )
                     }
                   </select>
-                </div> */}
-                {/* <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id,e.target.value,2)}>
+                </div>
+                <div className="mb-2">
+                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 2)}>
                     <option>Vozač 2</option>
                     {vozaci.map(vozac => <option 
                                             key={vozac.id} 
@@ -212,9 +141,9 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                                 )
                     }
                   </select>
-                </div> */}
-                {/* <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozilo(linija.id,e.target.value)}>
+                </div>
+                <div className="mb-2">
+                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozilo(linija.id, e.target.value)}>
                     <option>Vozilo</option>
                     {vozila.map(vozilo => <option 
                                             key={vozilo.id} 
@@ -224,20 +153,11 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                                             </option>
                     )}
                   </select> 
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
-        ))}
       </div>
-
-      {/* <div className="mt-5">
-        <div>
-          <button className="btn btn-primary m-3" onClick={addDostavnaLinijaHandler}>
-            Dodaj novu liniju za razvoz
-          </button>
-        </div>
-      </div> */}
     </div>
   );
 }
