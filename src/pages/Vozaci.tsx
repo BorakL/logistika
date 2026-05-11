@@ -19,6 +19,7 @@ const Vozaci = () => {
     const addVozacHandler = (data: {ime:string, prezime:string}) => {
         try{
             addVozac(data.ime, data.prezime)
+            vozacForm.reset()
         }catch(error){
             console.log(error)
         }

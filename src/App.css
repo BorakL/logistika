@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.card-linija{
+  color: rgb(71, 71, 71);
+  border: 1px solid blue
+}

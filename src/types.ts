@@ -17,7 +17,7 @@ export interface DostavnaLinija {
   id: string;
   broj: string;
   klinike: string;
-  vozilo?: string,
+  vozilo: string,
   smene: {
     0: string;
     1: string

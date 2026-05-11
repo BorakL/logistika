@@ -5,6 +5,7 @@ import Vozaci from './pages/Vozaci'
 import Vozila from './pages/Vozila'
 import Index from './pages/Index'
 import Linija from './pages/Linija'
+import NovaLinija from './pages/NovaLinija'
 
 function App() {
 
@@ -15,8 +16,8 @@ function App() {
       <Route path="/vozaci" element={<Vozaci/>}/>
       <Route path="/vozila" element={<Vozila/>}/>
       <Route path="/linije" element={<Linije/>}/>
-      <Route path="/linija/:id" element={<Linija/>}/>
-
+      <Route path="/linije/:id" element={<Linija/>}/>
+      <Route path="/novaLinija" element={<NovaLinija/>}/>
     </Routes>
     </>
   )

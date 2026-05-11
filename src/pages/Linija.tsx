@@ -1,5 +1,4 @@
 import { FaRegTrashAlt } from "react-icons/fa";
-import { FaTruck } from "react-icons/fa";
 import { useConfirm } from "../context/confirmContext";
 import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
@@ -63,7 +62,7 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
   // }
 
 
-  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:1|2) => {
+  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:0|1) => {
     try{
       updateLinija(id, {smene: {...linija.smene, [shift]:vozacId}})
     }catch(error){
@@ -88,13 +87,13 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Linija za razvoz</h2>
+      <h2 className="mb-4">Linija {linija.broj}</h2>
 
       <div className="row">
           <div key={linija.id} className="col-md-6 mb-4">
             <div className="card shadow-sm">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">{linija.id} <FaTruck/></h5>
+                {/* <h5 className="mb-0">{linija.broj} <FaTruck/></h5> */}
                 <div>
                   <button 
                     className="btn btn-sm btn-danger"
@@ -109,19 +108,16 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                     <div>Klinike: {linija.klinike}</div>
                 </div>
                 <div className="mb-2">
-                  <div><b>{linija.vozilo}</b></div>
+                  <div><b>{vozilaMap[linija.vozilo]?.naziv}</b></div>
                   <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
                   <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
                 </div>
                 <div className="mb-2">
-                  <div>Vozilo: {vozilaMap[linija.vozilo || ""]?.naziv}</div>
-                </div>
-                <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 1)}>
-                    <option>Vozač 1</option>
+                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 0)}>
+                    <option>Prva smena</option>
                     {vozaci.map(vozac => <option 
-                                            key={vozac.id} 
-                                            value={vozac.id}
+                                          key={vozac.id} 
+                                          value={vozac.id}
                                         >
                                             {vozac.prezime} {vozac.ime}
                                         </option>
@@ -130,13 +126,13 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                   </select>
                 </div>
                 <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 2)}>
-                    <option>Vozač 2</option>
+                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 1)}>
+                    <option>Druga smena</option>
                     {vozaci.map(vozac => <option 
                                             key={vozac.id} 
                                             value={vozac.id}
-                                            >
-                                                {vozac.prezime} {vozac.ime}
+                                          >
+                                              {vozac.prezime} {vozac.ime}
                                         </option>
                                 )
                     }
@@ -147,7 +143,7 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                     <option>Vozilo</option>
                     {vozila.map(vozilo => <option 
                                             key={vozilo.id} 
-                                            value={vozilo.naziv}
+                                            value={vozilo.id}
                                             >
                                               {vozilo.naziv}
                                             </option>

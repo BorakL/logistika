@@ -1,3 +1,4 @@
+import { Link, useNavigate } from "react-router";
 import { useData } from "../context/dataContext";
 
 export default function ListaDostavnihTura() {
@@ -9,6 +10,7 @@ export default function ListaDostavnihTura() {
     loading
   } = useData();
 
+  const navigate = useNavigate();
 
   const vozaciMap = Object.fromEntries(
     vozaci.map(v => [v.id, v])
@@ -25,24 +27,28 @@ export default function ListaDostavnihTura() {
 
       <div className="row">
         {linije.map((linija) => (
-          <div key={linija.id} className="col-md-6 mb-4">
-            <div className="card shadow-sm">
-              <div className="card-body">
-                <div className="mb-2">
-                    <div>Klinike: {linija.klinike}</div>
+          <div key={linija.id} className="col-md-6 mb-1">
+            <Link to={`/linije/${linija.id}`}>
+                <div className="card shadow-sm card-linija">
+                  <div className="card-body">
+                      <div>{linija.broj}</div>
+                    <div className="mb-2">
+                        <div>{linija.klinike}</div>
+                    </div>
+                    <div className="mb-2">
+                      <div><b>{vozilaMap[linija.vozilo || ""]?.naziv}</b></div>
+                      <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
+                      <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
+                    </div>
+                  </div>
                 </div>
-                <div className="mb-2">
-                  <div><b>{linija.vozilo}</b></div>
-                  <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
-                  <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
-                </div>
-                <div className="mb-2">
-                  <div>Vozilo: {vozilaMap[linija.vozilo || ""]?.naziv}</div>
-                </div>
-              </div>
-            </div>
+            </Link>
           </div>
         ))}
+      </div>
+
+      <div>
+        <button onClick={()=>navigate("/novaLinija")}>Dodaj novu liniju</button>
       </div>
     </div>
   );

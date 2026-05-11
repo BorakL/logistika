@@ -99,7 +99,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     const addVozac = async (ime: string, prezime: string) => {
         try{
             const docRef = await addDoc(
-                collection(db, "vozac"),
+                collection(db, "vozaci"),
                 {ime, prezime}
             )
             const noviVozac: Vozac = {
@@ -117,7 +117,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     const addLinija = async (data:DostavnaLinija) => {
         try{
             const docRef = await addDoc(
-                collection(db, "linija"),
+                collection(db, "linije"),
                 {...data}
             )
             const novaLinija: DostavnaLinija = {
@@ -155,7 +155,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     // LINIJA
     const deleteLinija = async (id:string) => {
         try{
-            await deleteDoc(doc(db,"linija",id))
+            await deleteDoc(doc(db,"linije",id))
             setLinije(prev => prev.filter(l => l.id !== id))
         }catch(error){
             console.log("Greška prilikom brisanja linije: ",error)
