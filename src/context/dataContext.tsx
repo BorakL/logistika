@@ -114,7 +114,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // LINIJA
-    const addLinija = async (data:DostavnaLinija) => {
+    const addLinija = async (data: DostavnaLinija) => {
         try{
             const docRef = await addDoc(
                 collection(db, "linije"),

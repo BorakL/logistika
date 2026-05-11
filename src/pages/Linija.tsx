@@ -90,7 +90,7 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
       <h2 className="mb-4">Linija {linija.broj}</h2>
 
       <div className="row">
-          <div key={linija.id} className="col-md-6 mb-4">
+          <div key={linija.id} className="col-md-12 mb-4">
             <div className="card shadow-sm">
               <div className="card-header d-flex justify-content-between align-items-center">
                 {/* <h5 className="mb-0">{linija.broj} <FaTruck/></h5> */}

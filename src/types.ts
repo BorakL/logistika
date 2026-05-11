@@ -23,3 +23,11 @@ export interface DostavnaLinija {
     1: string
   }
 }
+
+export interface NovaLinijaFormValues {
+  vozac1: string,
+  vozac2: string,
+  klinike: string,
+  vozilo: string,
+  broj: string
+}
