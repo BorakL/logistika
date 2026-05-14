@@ -31,3 +31,16 @@ export interface NovaLinijaFormValues {
   vozilo: string,
   broj: string
 }
+
+export interface PromeneFormProps {
+  vozaci: Vozac[],
+  vozila: Vozilo[],
+  target: "vozac1"|"vozac2"|"vozilo"
+}
+
+export interface PromeneFormValues {
+  tip: string,
+  vrednostId: string
+  od: string,
+  do: string,
+}

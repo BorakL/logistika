@@ -2,6 +2,8 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { useConfirm } from "../context/confirmContext";
 import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
+import { useForm } from "react-hook-form";
+import PromeneForm from "../components/promeneForm";
 
 
 export default function Linija() {
@@ -15,6 +17,17 @@ export default function Linija() {
     deleteLinija,
     updateLinija
   } = useData();
+
+  const {register, watch} = useForm({
+    defaultValues: {
+      tip: "stalno",
+      vrednostId: "",
+      od: "",
+      do: ""
+    }
+  });
+
+  const selectedTip = watch("tip")
 
   const linija = linije.find(l => l.id===id);
   if(!linija){
@@ -112,44 +125,23 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                   <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
                   <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
                 </div>
-                <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 0)}>
-                    <option>Prva smena</option>
-                    {vozaci.map(vozac => <option 
-                                          key={vozac.id} 
-                                          value={vozac.id}
-                                        >
-                                            {vozac.prezime} {vozac.ime}
-                                        </option>
-                                )
-                    }
-                  </select>
-                </div>
-                <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozac(linija.id, e.target.value, 1)}>
-                    <option>Druga smena</option>
-                    {vozaci.map(vozac => <option 
-                                            key={vozac.id} 
-                                            value={vozac.id}
-                                          >
-                                              {vozac.prezime} {vozac.ime}
-                                        </option>
-                                )
-                    }
-                  </select>
-                </div>
-                <div className="mb-2">
-                  <select className="form-select" onChange={(e)=>changeDostavnaLinijaVozilo(linija.id, e.target.value)}>
-                    <option>Vozilo</option>
-                    {vozila.map(vozilo => <option 
-                                            key={vozilo.id} 
-                                            value={vozilo.id}
-                                            >
-                                              {vozilo.naziv}
-                                            </option>
-                    )}
-                  </select> 
-                </div>
+                
+
+                
+              <h5>Izmene</h5>
+              <div className="mb-4">
+                <p>Promeni vozača prve smene: </p>
+                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozac1" />
+              </div>
+              <div className="mb-4">
+                <p>Promeni vozača druge smene: </p>
+                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozac2" />
+              </div>
+              <div className="mb-4">
+                <p>Promeni vozilo: </p>
+                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozilo" />
+              </div>
+
               </div>
             </div>
           </div>
