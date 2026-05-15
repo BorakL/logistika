@@ -2,7 +2,6 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { useConfirm } from "../context/confirmContext";
 import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
-import { useForm } from "react-hook-form";
 import PromeneForm from "../components/promeneForm";
 
 
@@ -17,17 +16,6 @@ export default function Linija() {
     deleteLinija,
     updateLinija
   } = useData();
-
-  const {register, watch} = useForm({
-    defaultValues: {
-      tip: "stalno",
-      vrednostId: "",
-      od: "",
-      do: ""
-    }
-  });
-
-  const selectedTip = watch("tip")
 
   const linija = linije.find(l => l.id===id);
   if(!linija){
@@ -75,21 +63,23 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
   // }
 
 
-  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:0|1) => {
+  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:0|1|undefined):Promise<void>  => {
     try{
-      updateLinija(id, {smene: {...linija.smene, [shift]:vozacId}})
+      if(shift){
+        updateLinija(id, {smene: {...linija.smene, [shift]:vozacId}})
+      }
     }catch(error){
       console.log(error)
     }
   }
 
-  const changeDostavnaLinijaVozilo = async (id: string, voziloNaziv:string) => {
-  try{
-    updateLinija(id, {vozilo: voziloNaziv})
-  }catch(error){
-    console.log(error)
+  const changeDostavnaLinijaVozilo = async (id: string, voziloNaziv:string):Promise<void> => {
+    try{
+      updateLinija(id, {vozilo: voziloNaziv})
+    }catch(error){
+      console.log(error)
+    }
   }
-}
 
   const vozaciMap = Object.fromEntries(
     vozaci.map(v => [v.id, v])
@@ -131,15 +121,35 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
               <h5>Izmene</h5>
               <div className="mb-4">
                 <p>Promeni vozača prve smene: </p>
-                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozac1" />
+                <PromeneForm 
+                  vozaci={vozaci} 
+                  vozila={vozila} 
+                  target="vozac" 
+                  linijaId={linija.id}
+                  smena={0}
+                  changeDostavnaLinijaVozac={changeDostavnaLinijaVozac} 
+                />
               </div>
               <div className="mb-4">
                 <p>Promeni vozača druge smene: </p>
-                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozac2" />
+                <PromeneForm 
+                  vozaci={vozaci} 
+                  vozila={vozila} 
+                  target="vozac" 
+                  linijaId={linija.id}
+                  smena={1}
+                  changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
+                />
               </div>
               <div className="mb-4">
                 <p>Promeni vozilo: </p>
-                <PromeneForm vozaci={vozaci} vozila={vozila} target="vozilo" />
+                <PromeneForm 
+                  vozaci={vozaci} 
+                  vozila={vozila} 
+                  target="vozilo" 
+                  linijaId={linija.id}
+                  changeDostavnaLinijaVozilo={changeDostavnaLinijaVozilo}
+                />
               </div>
 
               </div>

@@ -26,7 +26,8 @@ export default function NovaLinija() {
             smene: {
                 0: novaLinija.vozac1 || "",
                 1: novaLinija.vozac2 || ""
-            }
+            },
+            izmene: []
         }
         addLinija(data)
         reset();

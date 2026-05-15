@@ -21,7 +21,8 @@ export interface DostavnaLinija {
   smene: {
     0: string;
     1: string
-  }
+  },
+  izmene: Izmena[]
 }
 
 export interface NovaLinijaFormValues {
@@ -29,17 +30,30 @@ export interface NovaLinijaFormValues {
   vozac2: string,
   klinike: string,
   vozilo: string,
-  broj: string
+  broj: string,
+  izmene: Izmena[]
+}
+
+export interface Izmena {
+  tip: "stalno"|"danas"|"period",
+  vrednostId: string,
+  target: "vozac"|"vozilo",
+  od: string,
+  do: string,
 }
 
 export interface PromeneFormProps {
   vozaci: Vozac[],
   vozila: Vozilo[],
-  target: "vozac1"|"vozac2"|"vozilo"
+  target: "vozac"|"vozilo",
+  linijaId: string,
+  smena?: 0|1|undefined,
+  changeDostavnaLinijaVozac?: (id: string, vozacId:string, shift:0|1|undefined) => Promise<void>,
+  changeDostavnaLinijaVozilo?: (id: string, voziloNaziv:string) => Promise<void>
 }
 
 export interface PromeneFormValues {
-  tip: string,
+  tip: "stalno"|"danas"|"period",
   vrednostId: string
   od: string,
   do: string,
