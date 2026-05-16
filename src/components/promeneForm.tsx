@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { Izmena, PromeneFormProps, PromeneFormValues } from "../types";
 import { useData } from "../context/dataContext";
 
-const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linijaId, smena, changeDostavnaLinijaVozac}) => {
+const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linijaId, smena, changeDostavnaLinijaVozac, changeDostavnaLinijaVozilo}) => {
     const {register, handleSubmit, watch} = useForm<PromeneFormValues>({
         defaultValues: {
             tip: "stalno",
@@ -15,27 +15,30 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
     const{linije,updateLinija} = useData();
 
     const onSubmit = (promena: PromeneFormValues) => {
-        if(changeDostavnaLinijaVozac && target==="vozac" && promena.vrednostId && smena){
-            if(promena.tip==="stalno" ){
+        if(promena.tip==="stalno" && promena.vrednostId){
+            if(changeDostavnaLinijaVozac && target==="vozac" && smena){
                 changeDostavnaLinijaVozac(linijaId, promena.vrednostId, smena)
-            }else if(promena.tip==="danas" || promena.tip==="period"){
-                const today = new Date().toISOString().split("T")[0];
-                const odDate = promena.tip==="danas" ? today : promena.od;
-                const doDate = promena.tip==="danas" ? today : promena.do;
-                const izmena: Izmena = {
-                    tip: "danas",
-                    vrednostId: promena.vrednostId,
-                    target: "vozac",
-                    od: odDate,
-                    do: doDate
-                }
-                const linija = linije.find(l => l.id===linijaId)
-                const activeIzmene = linija?.izmene.filter(izmena => izmena.do >= today) || []
-                const updatedIzmene: Izmena[] = [...activeIzmene, izmena]
-                updateLinija(linijaId, {izmene: updatedIzmene})
+            } else if(changeDostavnaLinijaVozilo && target==="vozilo"){
+                changeDostavnaLinijaVozilo(linijaId, promena.vrednostId)
             }
+        }else {
+            const today = new Date().toISOString().split("T")[0];
+            const odDate = promena.tip==="danas" ? today : promena.od;
+            const doDate = promena.tip==="danas" ? today : promena.do;
+            const linija = linije.find(l => l.id===linijaId)
+            
+            const activeIzmene = linija?.izmene.filter(izmena => izmena.do >= today) || []
+            const izmena: Izmena = {
+                tip: promena.tip, 
+                vrednostId: promena.vrednostId,
+                target,
+                od: odDate,
+                do: doDate,
+                ...(target === "vozac" && {smena})
+            }
+            const updatedIzmene: Izmena[] = [...activeIzmene, izmena]  
+            updateLinija(linijaId, {izmene: updatedIzmene})    
         }
-
     }
 
     return(

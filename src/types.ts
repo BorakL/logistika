@@ -38,6 +38,7 @@ export interface Izmena {
   tip: "stalno"|"danas"|"period",
   vrednostId: string,
   target: "vozac"|"vozilo",
+  smena?: 0|1,
   od: string,
   do: string,
 }
