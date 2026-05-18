@@ -9,7 +9,7 @@ interface DataContextType {
     linije: DostavnaLinija[],
     loading: boolean,
     addVozilo: (naziv:string)=>void,
-    addVozac: (ime:string, prezime:string)=>void,
+    addVozac: (ime:string, prezime:string, nadimak?:string)=>void,
     addLinija: (data:DostavnaLinija)=>void,
     deleteVozilo: (id:string)=>void,
     deleteVozac: (id:string)=>void,
@@ -97,16 +97,17 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // VOZAC
-    const addVozac = async (ime: string, prezime: string) => {
+    const addVozac = async (ime: string, prezime: string, nadimak?: string) => {
         try{
             const docRef = await addDoc(
                 collection(db, "vozaci"),
-                {ime, prezime}
+                {ime, prezime, nadimak: nadimak || ""}
             )
             const noviVozac: Vozac = {
                 id: docRef.id,
                 ime,
-                prezime
+                prezime,
+                nadimak: nadimak || ""
             }
             setVozaci(prev => [...prev, noviVozac])
         }catch(error){

@@ -1,7 +1,8 @@
 export interface Vozac {
   id:string,
   ime: string,
-  prezime: string
+  prezime: string,
+  nadimak?: string
 }
 
 export interface Vozilo {
