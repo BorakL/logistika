@@ -90,13 +90,11 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Linija {linija.broj}</h2>
-
       <div className="row">
           <div key={linija.id} className="col-md-12 mb-4">
             <div className="card shadow-sm">
               <div className="card-header d-flex justify-content-between align-items-center">
-                {/* <h5 className="mb-0">{linija.broj} <FaTruck/></h5> */}
+                <h3 className="mb-4">Linija {linija.broj}</h3>
                 <div>
                   <button 
                     className="btn btn-sm btn-danger"
@@ -115,42 +113,78 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                   <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
                   <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
                 </div>
-                
+                              
+                <p>
+                  <a
+                    href="#collapseVozac1" 
+                    data-toggle="collapse" 
+                    role="button" 
+                    aria-expanded="false" 
+                    aria-controls="collapseVozac1"
+                  >
+                    Promeni vozača prve smene 
+                  </a>
+                </p>
+                <div className="collapse" id="collapseVozac1">
+                  <div className="card card-body">
+                    <PromeneForm 
+                      vozaci={vozaci} 
+                      vozila={vozila} 
+                      target="vozac" 
+                      linijaId={linija.id}
+                      smena={0}
+                      changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
+                    />
+                  </div>
+                </div>
 
-                
-              <h5>Izmene</h5>
-              <div className="mb-4">
-                <p>Promeni vozača prve smene: </p>
-                <PromeneForm 
-                  vozaci={vozaci} 
-                  vozila={vozila} 
-                  target="vozac" 
-                  linijaId={linija.id}
-                  smena={0}
-                  changeDostavnaLinijaVozac={changeDostavnaLinijaVozac} 
-                />
-              </div>
-              <div className="mb-4">
-                <p>Promeni vozača druge smene: </p>
-                <PromeneForm 
-                  vozaci={vozaci} 
-                  vozila={vozila} 
-                  target="vozac" 
-                  linijaId={linija.id}
-                  smena={1}
-                  changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
-                />
-              </div>
-              <div className="mb-4">
-                <p>Promeni vozilo: </p>
-                <PromeneForm 
-                  vozaci={vozaci} 
-                  vozila={vozila} 
-                  target="vozilo" 
-                  linijaId={linija.id}
-                  changeDostavnaLinijaVozilo={changeDostavnaLinijaVozilo}
-                />
-              </div>
+                <p>
+                  <a
+                    href="#collapseVozac2" 
+                    data-toggle="collapse" 
+                    role="button" 
+                    aria-expanded="false" 
+                    aria-controls="collapseVozac2"
+                  >
+                    Promeni vozača druge smene 
+                  </a>
+                </p>
+                <div className="collapse" id="collapseVozac2">
+                  <div className="card card-body">
+                    <PromeneForm 
+                      vozaci={vozaci} 
+                      vozila={vozila} 
+                      target="vozac" 
+                      linijaId={linija.id}
+                      smena={1}
+                      changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
+                    />
+                  </div>
+                </div>
+
+                <p>
+                  <a
+                    href="#collapseVozilo" 
+                    data-toggle="collapse" 
+                    role="button" 
+                    aria-expanded="false" 
+                    aria-controls="collapseVozilo"
+                  >
+                    Promeni vozilo
+                  </a>
+                </p>
+                <div className="collapse" id="collapseVozilo">
+                  <div className="card card-body">
+                    <PromeneForm 
+                      vozaci={vozaci} 
+                      vozila={vozila} 
+                      target="vozilo" 
+                      linijaId={linija.id}
+                      smena={0}
+                      changeDostavnaLinijaVozilo={changeDostavnaLinijaVozilo}
+                    />
+                  </div>
+                </div>
 
               </div>
             </div>
