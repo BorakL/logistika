@@ -85,6 +85,13 @@ const Vozaci = () => {
                                         </div>
                                     )}
                                 </div>
+                                <div className="col-mb-6">
+                                    <input 
+                                        type="text" 
+                                        className="form-control"
+                                        placeholder="Nadimak (opciono)"    
+                                    />
+                                </div>
                                 <div className="col-12">
                                     <button type="submit" className="btn btn-primary">
                                         <i className="bi bi-plus-circle"></i> Dodaj vozača

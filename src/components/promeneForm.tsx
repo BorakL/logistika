@@ -78,28 +78,32 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
 
             {selectedTip === "period" && (
             <div className="">
-                <div className="col">
-                    <label>Od</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        {...register("od")}
-                    />
+                <div className="mb-2 d-flex justify-content-around">
+                    <label>Od: </label>
+                    <div>
+                        <input
+                            type="date"
+                            className="form-control"
+                            {...register("od")}
+                        />
+                    </div>
                 </div>
-                <div className="col">
-                    <label>Do</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        {...register("do")}
-                    />
+                <div className="mb-2 d-flex justify-content-around">
+                    <label>Do: </label>
+                    <div>
+                        <input
+                            type="date"
+                            className="form-control"
+                            {...register("do")}
+                        />
+                    </div>
                 </div>
             </div>
             )}
 
             <div>
                 <select 
-                    className="form-select" 
+                    className="form-select form-select-lg mb-3" 
                     {...register("vrednostId")}
                 >
                     {
@@ -133,7 +137,7 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
                 </select>
             </div>
 
-            <button type="submit">{target==="vozilo" ? "Izmeni vozilo" : "Izmeni vozača"}</button>
+            <button className="btn btn-primary mb-3" type="submit">{target==="vozilo" ? "Izmeni vozilo" : "Izmeni vozača"}</button>
         </form>
     )
 }

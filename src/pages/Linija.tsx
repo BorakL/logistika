@@ -1,19 +1,19 @@
-import { FaRegTrashAlt } from "react-icons/fa";
-import { useConfirm } from "../context/confirmContext";
+// import { FaRegTrashAlt } from "react-icons/fa";
+// import { useConfirm } from "../context/confirmContext";
 import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
 import PromeneForm from "../components/promeneForm";
+import { FaHospital } from "react-icons/fa";
 
 
 export default function Linija() {
-  const {confirm} = useConfirm();
+  // const {confirm} = useConfirm();
   const {id} = useParams(); 
   const {
     linije,
     vozaci,
     vozila,
     loading,
-    deleteLinija,
     updateLinija
   } = useData();
 
@@ -26,18 +26,18 @@ export default function Linija() {
     return <p>Loading...</p>
   }
 
-const removeDostavnaLinijaHandler = async (message:string, id:string) => 
-  confirm({
-    message: message,
-    onConfirm: async() => {
-      try{
-        //Obriši dostavnu liniju u bazi
-        deleteLinija(id)
-      }catch(error){
-        console.log(error)
-      }
-    }  
-  })
+// const removeDostavnaLinijaHandler = async (message:string, id:string) => 
+//   confirm({
+//     message: message,
+//     onConfirm: async() => {
+//       try{
+//         //Obriši dostavnu liniju u bazi
+//         deleteLinija(id)
+//       }catch(error){
+//         console.log(error)
+//       }
+//     }  
+//   })
 
   // const addDostavnaLinijaHandler = async (data: {broj:string, klinike:string, vozilo:string, smene:Smene}) => {
   //   try{
@@ -92,41 +92,41 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
     <div className="container py-4">
       <div className="row">
           <div key={linija.id} className="col-md-12 mb-4">
-            <div className="card shadow-sm">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="mb-4">Linija {linija.broj}</h3>
-                <div>
+            <div className="card p-0">
+              <div className="card-header" >
+                <h4>Linija {linija.broj}</h4>
+                {/* <div>
                   <button 
                     className="btn btn-sm btn-danger"
                     title="Obriši liniju za razvoz"
                     onClick={()=>removeDostavnaLinijaHandler("Da li ste sigurni da želite da obrišete ovu liniju za razvoz?", linija.id)}>
                       <FaRegTrashAlt/>
                   </button>
-                </div>
+                </div> */}
               </div>
               <div className="card-body">
                 <div className="mb-2">
-                    <div>Klinike: {linija.klinike}</div>
+                    <div><FaHospital/> {linija.klinike}</div>
                 </div>
-                <div className="mb-2">
-                  <div><b>{vozilaMap[linija.vozilo]?.naziv}</b></div>
-                  <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
-                  <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
+                <div className="mb-3">
+                  <div className="mb-2"><span className="tablice">{vozilaMap[linija.vozilo]?.naziv}</span></div>
+                  <div>1 - <b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
+                  <div>2 - <b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
                 </div>
-                              
-                <p>
-                  <a
-                    href="#collapseVozac1" 
-                    data-toggle="collapse" 
-                    role="button" 
-                    aria-expanded="false" 
-                    aria-controls="collapseVozac1"
-                  >
-                    Promeni vozača prve smene 
-                  </a>
-                </p>
-                <div className="collapse" id="collapseVozac1">
-                  <div className="card card-body">
+
+                <div className="mb-2 card p-2">
+                  <div className="p-2">
+                    <a
+                      href="#collapseVozac1" 
+                      data-toggle="collapse" 
+                      role="button" 
+                      aria-expanded="false" 
+                      aria-controls="collapseVozac1"
+                    >
+                      Promeni vozača prve smene 
+                    </a>
+                  </div>
+                  <div className="collapse" id="collapseVozac1">
                     <PromeneForm 
                       vozaci={vozaci} 
                       vozila={vozila} 
@@ -135,22 +135,22 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                       smena={0}
                       changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
                     />
-                  </div>
-                </div>
+                  </div>                  
+                </div>              
 
-                <p>
-                  <a
-                    href="#collapseVozac2" 
-                    data-toggle="collapse" 
-                    role="button" 
-                    aria-expanded="false" 
-                    aria-controls="collapseVozac2"
-                  >
-                    Promeni vozača druge smene 
-                  </a>
-                </p>
-                <div className="collapse" id="collapseVozac2">
-                  <div className="card card-body">
+                <div className="mb-2 card p-2">
+                  <div className="p-2">
+                    <a
+                      href="#collapseVozac2" 
+                      data-toggle="collapse" 
+                      role="button" 
+                      aria-expanded="false" 
+                      aria-controls="collapseVozac2"
+                    >
+                      Promeni vozača druge smene 
+                    </a>
+                  </div>
+                  <div className="collapse" id="collapseVozac2">
                     <PromeneForm 
                       vozaci={vozaci} 
                       vozila={vozila} 
@@ -162,19 +162,19 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                   </div>
                 </div>
 
-                <p>
-                  <a
-                    href="#collapseVozilo" 
-                    data-toggle="collapse" 
-                    role="button" 
-                    aria-expanded="false" 
-                    aria-controls="collapseVozilo"
-                  >
-                    Promeni vozilo
-                  </a>
-                </p>
-                <div className="collapse" id="collapseVozilo">
-                  <div className="card card-body">
+                <div className="mb-2 card p-2">
+                  <div className="p-2">
+                    <a
+                      href="#collapseVozilo" 
+                      data-toggle="collapse" 
+                      role="button" 
+                      aria-expanded="false" 
+                      aria-controls="collapseVozilo"
+                    >
+                      Promeni vozilo
+                    </a>
+                  </div>
+                  <div className="collapse" id="collapseVozilo">
                     <PromeneForm 
                       vozaci={vozaci} 
                       vozila={vozila} 
@@ -185,6 +185,7 @@ const removeDostavnaLinijaHandler = async (message:string, id:string) =>
                     />
                   </div>
                 </div>
+                
 
               </div>
             </div>
