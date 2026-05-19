@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import { useData } from "../context/dataContext";
+import { useEffect, useState } from "react";
 
 export default function ListaDostavnihTura() {
 
@@ -11,6 +12,9 @@ export default function ListaDostavnihTura() {
   } = useData();
 
   const navigate = useNavigate();
+  const [manjakVozaca, setManjakVozaca] = useState<string[]>([]);
+  const [manjakVozila, setManjakVoila] = useState<string[]>([]);
+  const [ukupnaFaljenja, setUkupnaFaljenja] = useState<string[]>([]);
 
   const vozaciMap = Object.fromEntries(
     vozaci.map(v => [v.id, v])
@@ -19,36 +23,70 @@ export default function ListaDostavnihTura() {
     vozila.map(v => [v.id, v])
   )
 
+  const proveriLiniju = (linija:string) => {
+    return ukupnaFaljenja.some(f => f==linija)
+  }
+
+  useEffect(()=>{
+    const vozaciFale:string[] = [];
+    const vozilaFale:string[] = [];
+    linije.forEach(linija => {
+      if(!vozaciMap[linija.smene[1]] || !vozaciMap[linija.smene[2]]){
+        vozaciFale.push(linija.broj)
+      };
+      if(!vozilaMap[linija.vozilo]){
+        vozilaFale.push(linija.broj)
+      }
+    })
+    setManjakVozaca(vozaciFale)
+    setManjakVoila(vozilaFale)
+  },[linije])
+
+  useEffect(()=>{
+     const faljenja:string[] = [...manjakVozaca, ...manjakVozila];
+    setUkupnaFaljenja(faljenja)
+  },[manjakVozaca,manjakVozila])
+
   if (loading ) return <p>Učitavanje...</p>
 
   return (
-    <div className="container py-4">
+    <div className="container mt-4">
       <h2 className="mb-4">Linije za razvoz</h2>
-
+      <div>
+        
+          {manjakVozaca.length>0 &&
+          <div className="alert alert-danger" role="alert">
+            {`Na sledećim linijama fale vozači: ${manjakVozaca.join(", ")}`}
+          </div>}
+        
+          {manjakVozila.length>0 &&
+          <div className="alert alert-danger" role="alert">
+            {`Na sledećim linijama fale vozila: ${manjakVozaca.join(", ")}`}
+          </div>}
+        
+      </div>
       <div className="row">
         {linije.map((linija) => (
-          <div key={linija.id} className="col-md-6 mb-1">
-            <Link to={`/linije/${linija.id}`}>
-                <div className="card shadow-sm card-linija">
-                  <div className="card-body">
-                      <div>{linija.broj}</div>
-                    <div className="mb-2">
-                        <div>{linija.klinike}</div>
-                    </div>
-                    <div className="mb-2">
-                      <div><b>{vozilaMap[linija.vozilo || ""]?.naziv}</b></div>
-                      <div><b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
-                      <div><b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
-                    </div>
-                  </div>
-                </div>
+          <div key={linija.id} className="col-md-4 mb-4 kartica-linija">
+            <Link to={`/linije/${linija.id}`} >
+              <div className={ proveriLiniju(linija.broj) ? "text-danger" : "" }> 
+                <h5>Linija {linija.broj}</h5>
+                <div>
+                  <strong>Klinike:</strong> {linija.klinike}<br/>
+                  <strong>Vozilo:</strong> {vozilaMap[linija.vozilo || ""]?.naziv.toUpperCase()}<br/>
+                  <strong>Vozač 1:</strong> {vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}<br/>
+                  <strong>Vozač 2:</strong> {vozaciMap[linija.smene[2]]?.ime || ""} {vozaciMap[linija.smene[2]]?.prezime || ""}
+                </div> 
+              </div>
             </Link>
           </div>
         ))}
       </div>
 
-      <div>
-        <button onClick={()=>navigate("/novaLinija")}>Dodaj novu liniju</button>
+      <div className="mt-4">
+        <button onClick={() => navigate("/novaLinija")} className="btn btn-primary">
+          Dodaj novu liniju
+        </button>
       </div>
     </div>
   );

@@ -1,13 +1,22 @@
 import { useForm } from "react-hook-form";
 import { useData } from "../context/dataContext";
+import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../components/confirmModal";
+import { useState } from "react";
+import { useConfirm } from "../context/confirmContext";
 
 const Vozila = () => {
     const{
         vozila,
+        linije,
         loading,
         addVozilo,
         deleteVozilo
     } = useData();
+
+    const[showMessage,setShowMessage] = useState(false);
+    const navigate = useNavigate();
+    const {confirm} = useConfirm();
 
     const voziloForm = useForm<{
         naziv: string
@@ -15,16 +24,34 @@ const Vozila = () => {
 
     const addVoziloHandler = async (data: {naziv:string}) => {
         try{
+            if(vozila.some(v => v.naziv===data.naziv)){
+                setShowMessage(true)
+                return;
+            }
             addVozilo(data.naziv)
+            voziloForm.reset();
         }catch(error){
             console.log(error)
         }
     }
     
 
-    const removeVoziloHandler = async(id:string) => {
+    const removeVoziloHandler = async(id:string, naziv:string) => {
         try{
-            deleteVozilo(id)
+            confirm({
+                message: `Da li ste sigurni da želite da obrišete vozilo ${naziv.toUpperCase()}?`,
+                onConfirm: async() => {
+                    try{
+                        //Obriši vozilo
+                        deleteVozilo(id);
+                        if(linije.some(l => l.vozilo===id)){
+                            navigate(`/linije`)
+                        }
+                    }catch(error){
+                        console.log(error)
+                    }
+                }
+            })
         }catch(error){
             console.log(error)
         }
@@ -41,10 +68,10 @@ const Vozila = () => {
                             className="list-group-item d-flex justify-content-between align-items-center" 
                             key={vozilo.id}
                         >
-                            <div className="me-3">{vozilo.naziv}</div>
+                            <div className="me-3">{vozilo.naziv.toUpperCase()}</div>
                             <button 
                                 className="btn btn-sm btn-outline-danger"
-                                onClick={() => removeVoziloHandler(vozilo.id)}
+                                onClick={() => removeVoziloHandler(vozilo.id, vozilo.naziv)}
                             >
                                 <i className="bi bi-trash"></i> Obriši
                             </button>
@@ -84,6 +111,14 @@ const Vozila = () => {
                     </div>
                 </div>
             </div>
+            <ConfirmModal
+                show={showMessage}
+                onClose={() => {
+                    setShowMessage(false);
+                }}
+                inform={true}
+                message="Vozilo sa navedenom registracijom već postoji u bazi"
+            />
         </div>
     )
 }

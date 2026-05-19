@@ -15,8 +15,10 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
     const{linije,updateLinija} = useData();
 
     const onSubmit = (promena: PromeneFormValues) => {
+        // console.log("ovde rad", promena, " ", target, smena)
         if(promena.tip==="stalno" && promena.vrednostId){
             if(changeDostavnaLinijaVozac && target==="vozac" && smena){
+                console.log("xxxxxxxx")
                 changeDostavnaLinijaVozac(linijaId, promena.vrednostId, smena)
             } else if(changeDostavnaLinijaVozilo && target==="vozilo"){
                 changeDostavnaLinijaVozilo(linijaId, promena.vrednostId)

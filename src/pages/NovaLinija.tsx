@@ -24,8 +24,8 @@ export default function NovaLinija() {
             broj: novaLinija.broj || "",
             vozilo: novaLinija.vozilo || "",
             smene: {
-                0: novaLinija.vozac1 || "",
-                1: novaLinija.vozac2 || ""
+                1: novaLinija.vozac1 || "",
+                2: novaLinija.vozac2 || ""
             },
             izmene: []
         }

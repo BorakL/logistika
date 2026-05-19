@@ -1,5 +1,3 @@
-// import { FaRegTrashAlt } from "react-icons/fa";
-// import { useConfirm } from "../context/confirmContext";
 import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
 import PromeneForm from "../components/promeneForm";
@@ -18,13 +16,6 @@ export default function Linija() {
   } = useData();
 
   const linija = linije.find(l => l.id===id);
-  if(!linija){
-    return <p>Linija nije pronađena</p>
-  }
-
-  if(loading) {
-    return <p>Loading...</p>
-  }
 
 // const removeDostavnaLinijaHandler = async (message:string, id:string) => 
 //   confirm({
@@ -63,9 +54,9 @@ export default function Linija() {
   // }
 
 
-  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:0|1|undefined):Promise<void>  => {
+  const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:1|2|undefined):Promise<void>  => {
     try{
-      if(shift){
+      if(shift && linija){
         updateLinija(id, {smene: {...linija.smene, [shift]:vozacId}})
       }
     }catch(error){
@@ -88,6 +79,14 @@ export default function Linija() {
     vozila.map(v => [v.id, v])
   )
 
+  if(loading) {
+    return <p>Loading...</p>
+  }
+
+  if(!linija){
+    return <p>Linija nije pronađena</p>
+  }
+
   return (
     <div className="container py-4">
       <div className="row">
@@ -109,11 +108,34 @@ export default function Linija() {
                     <div><FaHospital/> {linija.klinike}</div>
                 </div>
                 <div className="mb-3">
-                  <div className="mb-2"><span className="tablice">{vozilaMap[linija.vozilo]?.naziv}</span></div>
-                  <div>1 - <b>{vozaciMap[linija.smene[0]]?.ime || ""} {vozaciMap[linija.smene[0]]?.prezime || ""}</b></div>
-                  <div>2 - <b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
+                  <div className="mb-2"><span className="tablice">{vozilaMap[linija.vozilo]?.naziv.toUpperCase()}</span></div>
+                  <div>1 - <b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
+                  <div>2 - <b>{vozaciMap[linija.smene[2]]?.ime || ""} {vozaciMap[linija.smene[2]]?.prezime || ""}</b></div>
                 </div>
 
+                <div className="mb-2 card p-2">
+                  <div className="p-2">
+                    <a
+                      href="#collapseVozilo" 
+                      data-toggle="collapse" 
+                      role="button" 
+                      aria-expanded="false" 
+                      aria-controls="collapseVozilo"
+                    >
+                      Vozilo - promena
+                    </a>
+                  </div>
+                  <div className="collapse" id="collapseVozilo">
+                    <PromeneForm 
+                      vozaci={vozaci} 
+                      vozila={vozila} 
+                      target="vozilo" 
+                      linijaId={linija.id}
+                      changeDostavnaLinijaVozilo={changeDostavnaLinijaVozilo}
+                    />
+                  </div>
+                </div>
+                
                 <div className="mb-2 card p-2">
                   <div className="p-2">
                     <a
@@ -123,7 +145,7 @@ export default function Linija() {
                       aria-expanded="false" 
                       aria-controls="collapseVozac1"
                     >
-                      Promeni vozača prve smene 
+                      1. Smena - promena
                     </a>
                   </div>
                   <div className="collapse" id="collapseVozac1">
@@ -132,7 +154,7 @@ export default function Linija() {
                       vozila={vozila} 
                       target="vozac" 
                       linijaId={linija.id}
-                      smena={0}
+                      smena={1}
                       changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
                     />
                   </div>                  
@@ -147,7 +169,7 @@ export default function Linija() {
                       aria-expanded="false" 
                       aria-controls="collapseVozac2"
                     >
-                      Promeni vozača druge smene 
+                      2. Smena - promena
                     </a>
                   </div>
                   <div className="collapse" id="collapseVozac2">
@@ -156,36 +178,11 @@ export default function Linija() {
                       vozila={vozila} 
                       target="vozac" 
                       linijaId={linija.id}
-                      smena={1}
+                      smena={2}
                       changeDostavnaLinijaVozac={changeDostavnaLinijaVozac}
                     />
                   </div>
                 </div>
-
-                <div className="mb-2 card p-2">
-                  <div className="p-2">
-                    <a
-                      href="#collapseVozilo" 
-                      data-toggle="collapse" 
-                      role="button" 
-                      aria-expanded="false" 
-                      aria-controls="collapseVozilo"
-                    >
-                      Promeni vozilo
-                    </a>
-                  </div>
-                  <div className="collapse" id="collapseVozilo">
-                    <PromeneForm 
-                      vozaci={vozaci} 
-                      vozila={vozila} 
-                      target="vozilo" 
-                      linijaId={linija.id}
-                      smena={0}
-                      changeDostavnaLinijaVozilo={changeDostavnaLinijaVozilo}
-                    />
-                  </div>
-                </div>
-                
 
               </div>
             </div>

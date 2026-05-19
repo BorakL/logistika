@@ -39,6 +39,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                         prezime: data.prezime
                     }
                 })
+                vozaciData.sort((a:Vozac,b:Vozac) => a.prezime.localeCompare(b.prezime) )
                 setVozaci(vozaciData)
                 
                 // VOZILA
@@ -167,6 +168,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     //////////////////// UPDATE-uj LINIJU //////////////////////
     const updateLinija = async (id: string, updates: Partial<DostavnaLinija>) => {
         try{
+            console.log("Updateeeeeeeeeeee")
             // Firestore update
             await updateDoc(
                 doc(db, "linije", id),

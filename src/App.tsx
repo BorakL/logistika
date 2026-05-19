@@ -3,16 +3,16 @@ import { Routes, Route } from "react-router-dom"
 import Linije from './pages/Linije'
 import Vozaci from './pages/Vozaci'
 import Vozila from './pages/Vozila'
-import Index from './pages/Index'
 import Linija from './pages/Linija'
 import NovaLinija from './pages/NovaLinija'
+import NavBar from './components/navbar'
 
 function App() {
 
   return (
-    <>    
+    <>
+    <NavBar/>  
     <Routes>
-      <Route path="/" element={<Index/>}/>
       <Route path="/vozaci" element={<Vozaci/>}/>
       <Route path="/vozila" element={<Vozila/>}/>
       <Route path="/linije" element={<Linije/>}/>
