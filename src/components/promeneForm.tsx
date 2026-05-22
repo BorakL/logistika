@@ -80,9 +80,9 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
 
             {selectedTip === "period" && (
             <div className="">
-                <div className="mb-2 d-flex justify-content-around">
+                <div className="mb-2 d-flex justify-content-center align-items-center">
                     <label>Od: </label>
-                    <div>
+                    <div className="p-2">
                         <input
                             type="date"
                             className="form-control"
@@ -90,9 +90,9 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
                         />
                     </div>
                 </div>
-                <div className="mb-2 d-flex justify-content-around">
+                <div className="mb-2 d-flex justify-content-center align-items-center">
                     <label>Do: </label>
-                    <div>
+                    <div className="p-2">
                         <input
                             type="date"
                             className="form-control"

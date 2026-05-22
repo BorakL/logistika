@@ -36,16 +36,23 @@ const Vozila = () => {
     }
     
 
-    const removeVoziloHandler = async(id:string, naziv:string) => {
+    const removeVoziloHandler = async(id: string, naziv: string) => {
         try{
             confirm({
                 message: `Da li ste sigurni da želite da obrišete vozilo ${naziv.toUpperCase()}?`,
                 onConfirm: async() => {
                     try{
-                        //Obriši vozilo
-                        deleteVozilo(id);
-                        if(linije.some(l => l.vozilo===id)){
-                            navigate(`/linije`)
+                        // Prvo proveri da li se koristi
+                        const koristiSeULinijama = linije.some(l => l.vozilo === id);
+                        
+                        // Obriši vozilo
+                        await deleteVozilo(id);  // Dodaj await ako je deleteVozilo async
+                        
+                        // Tek nakon brisanja, navigiraj ako treba
+                        if(koristiSeULinijama){
+                            navigate('/linije', { replace: true });
+                            // Opciono: dodaj mali timeout
+                            // setTimeout(() => navigate('/linije'), 100);
                         }
                     }catch(error){
                         console.log(error)

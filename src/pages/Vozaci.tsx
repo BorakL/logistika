@@ -69,15 +69,15 @@ const Vozaci = () => {
                 message: `Da li ste sigurni da želite da obrišete vozača: ${vozac?.ime} ${vozac?.prezime} ${vozac?.nadimak}?`,
                 onConfirm: async() => {
                     try{
-                        deleteVozac(id)
-                        const linijaBezVozaca = linije.find(l => {
+                        const koristiSeULinijama = linije.find(l => {
                             const vozaci = Object.values(l.smene);
                             if(vozaci.some(v => v===id)){
                                 return true;
                             }
                         })
-                        if(linijaBezVozaca){
-                            navigate(`/linije`)
+                        await deleteVozac(id)
+                        if(koristiSeULinijama){
+                            navigate('/linije', { replace: true });
                         }
                     }catch(error){
                         console.log(error)

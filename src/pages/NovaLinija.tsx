@@ -1,13 +1,10 @@
 import { useData } from "../context/dataContext";
 import { useForm } from "react-hook-form";
 import { NovaLinijaFormValues } from "../types";
-import ConfirmModal from "../components/confirmModal";
-import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 
 export default function NovaLinija() {
-    const[showMessage, setShowMessage] = useState(false);
     const {
         vozaci,
         vozila,
@@ -15,6 +12,7 @@ export default function NovaLinija() {
     } = useData();
 
   const {register, handleSubmit, reset, formState: {errors}} = useForm<NovaLinijaFormValues>()
+  const navigate = useNavigate();
 
   const onSubmit = async(novaLinija: NovaLinijaFormValues) => {
     try{
@@ -31,7 +29,7 @@ export default function NovaLinija() {
         }
         addLinija(data)
         reset();
-        setShowMessage(true);
+        navigate("/adminPanel")
     }catch(error){
         console.log("Problem priliko dodavanja nove linije: ", error)
     }
@@ -41,10 +39,10 @@ export default function NovaLinija() {
     <div className="container py-4">
       <h2 className="mb-4">Nova linija</h2>
 
-      <div className="row">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="col-md-12 mb-4">
-                <div className="card shadow-sm">
+       
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-2">
+                <div className="">
                     <div className="card-body">
                         <div className="mb-2">
                             <input type="text" id="broj" {...register("broj", {required: "Navedite broj dostavne linije!"})} placeholder="Broj linije"/>
@@ -106,20 +104,8 @@ export default function NovaLinija() {
                     </div>
                 </div>
             </div>
-            <button type="submit">
-                Sačuvaj
-            </button>
-          </form>
-      </div>
-
-        <ConfirmModal
-          show={showMessage}
-          onClose={() => {
-            setShowMessage(false);
-          }}
-          inform={true}
-          message="Nova dostavna linija je uspešno kreirana"
-        />
+            <button className="btn btn-primary" type="submit">Sačuvaj</button>
+        </form>
 
     </div>
   );

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useData } from "../context/dataContext";
 import { useEffect, useState } from "react";
 
@@ -11,7 +11,6 @@ export default function ListaDostavnihTura() {
     loading
   } = useData();
 
-  const navigate = useNavigate();
   const [manjakVozaca, setManjakVozaca] = useState<string[]>([]);
   const [manjakVozila, setManjakVoila] = useState<string[]>([]);
   const [ukupnaFaljenja, setUkupnaFaljenja] = useState<string[]>([]);
@@ -67,7 +66,7 @@ export default function ListaDostavnihTura() {
       </div>
       <div className="row">
         {linije.map((linija) => (
-          <div key={linija.id} className="col-md-4 mb-4 kartica-linija">
+          <div key={linija.id} className="col mb-4 kartica-linija">
             <Link to={`/linije/${linija.id}`} >
               <div className={ proveriLiniju(linija.broj) ? "text-danger" : "" }> 
                 <h5>Linija {linija.broj}</h5>
@@ -81,12 +80,6 @@ export default function ListaDostavnihTura() {
             </Link>
           </div>
         ))}
-      </div>
-
-      <div className="mt-4">
-        <button onClick={() => navigate("/novaLinija")} className="btn btn-primary">
-          Dodaj novu liniju
-        </button>
       </div>
     </div>
   );
