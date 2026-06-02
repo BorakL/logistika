@@ -66,7 +66,7 @@ const Vozaci = () => {
         try{
             const vozac = vozaci.find(vozac => vozac.id===id)
             confirm({
-                message: `Da li ste sigurni da želite da obrišete vozača: ${vozac?.ime} ${vozac?.prezime} ${vozac?.nadimak}?`,
+                message: `Da li ste sigurni da želite da obrišete vozača - ${vozac?.ime} ${vozac?.prezime} ${vozac?.nadimak ? vozac.nadimak : ""}?`,
                 onConfirm: async() => {
                     try{
                         const koristiSeULinijama = linije.find(l => {
