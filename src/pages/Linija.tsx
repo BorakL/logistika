@@ -17,43 +17,6 @@ export default function Linija() {
 
   const linija = linije.find(l => l.id===id);
 
-// const removeDostavnaLinijaHandler = async (message:string, id:string) => 
-//   confirm({
-//     message: message,
-//     onConfirm: async() => {
-//       try{
-//         //Obriši dostavnu liniju u bazi
-//         deleteLinija(id)
-//       }catch(error){
-//         console.log(error)
-//       }
-//     }  
-//   })
-
-  // const addDostavnaLinijaHandler = async (data: {broj:string, klinike:string, vozilo:string, smene:Smene}) => {
-  //   try{
-  //     //Dodajemo novu dostavnu liniju u bazu
-  //     await addDoc(collection(db, "linije"), {
-  //         broj: data.broj,
-  //         klinike: data.klinike,
-  //         vozilo: data.vozilo,
-  //         smene: data.smene
-  //     })
-  //     const novaDostavnaLinija: DostavnaLinija = {
-  //       id: Date.now().toString(),
-  //       broj: data.broj,
-  //       klinike: data.klinike,
-  //       vozilo: data.vozilo,
-  //       smene: data.smene
-  //     }
-  //     const updatedDostavneLinije = [...dostavneLinije, novaDostavnaLinija];
-  //     setDostavneLinije(updatedDostavneLinije);
-  //   }catch(error){
-  //     console.log("Greška pri dodavanju ture: ", error)
-  //   }
-  // }
-
-
   const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:1|2|undefined):Promise<void>  => {
     try{
       if(shift && linija){
@@ -66,6 +29,7 @@ export default function Linija() {
 
   const changeDostavnaLinijaVozilo = async (id: string, voziloNaziv:string):Promise<void> => {
     try{
+      console.log("poziva seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
       updateLinija(id, {vozilo: voziloNaziv})
     }catch(error){
       console.log(error)
@@ -94,14 +58,6 @@ export default function Linija() {
             <div className="card p-0">
               <div className="card-header" >
                 <h4>Linija {linija.broj}</h4>
-                {/* <div>
-                  <button 
-                    className="btn btn-sm btn-danger"
-                    title="Obriši liniju za razvoz"
-                    onClick={()=>removeDostavnaLinijaHandler("Da li ste sigurni da želite da obrišete ovu liniju za razvoz?", linija.id)}>
-                      <FaRegTrashAlt/>
-                  </button>
-                </div> */}
               </div>
               <div className="card-body">
                 <div className="mb-2">

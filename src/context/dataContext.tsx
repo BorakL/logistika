@@ -63,7 +63,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                         klinike: data.klinike,
                         vozilo: data.vozilo,
                         smene: data.smene,
-                        izmene: []
+                        izmene: data.izmene
                     }
                 })
                 setLinije(linijeData);

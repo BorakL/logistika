@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useData } from "../context/dataContext";
 import { useEffect, useState } from "react";
+import { getAktivnaVrednost } from "../utilities/utilities";
 
 export default function ListaDostavnihTura() {
 
@@ -44,7 +45,7 @@ export default function ListaDostavnihTura() {
   useEffect(()=>{
      const faljenja:string[] = [...manjakVozaca, ...manjakVozila];
     setUkupnaFaljenja(faljenja)
-  },[manjakVozaca,manjakVozila])
+  },[manjakVozaca,manjakVozila]) 
 
   if (loading ) return <p>Učitavanje...</p>
 
@@ -72,7 +73,14 @@ export default function ListaDostavnihTura() {
                 <h5>Linija {linija.broj}</h5>
                 <div>
                   <strong>Klinike:</strong> {linija.klinike}<br/>
-                  <strong>Vozilo:</strong> {vozilaMap[linija.vozilo || ""]?.naziv.toUpperCase()}<br/>
+                  <strong>Vozilo:</strong> 
+                  {
+                    getAktivnaVrednost(linija,"vozilo",vozilaMap).aktivnaVrednost ? 
+                      `${getAktivnaVrednost(linija,"vozilo",vozilaMap).aktivnaVrednost?.toUpperCase()} na zameni do ${getAktivnaVrednost(linija,"vozilo",vozilaMap).izvor}` : 
+                      getAktivnaVrednost(linija,"vozilo",vozilaMap).defaultVrednost?.toUpperCase()
+                  }
+                  <br/>
+                  
                   <strong>Vozač 1:</strong> {vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}<br/>
                   <strong>Vozač 2:</strong> {vozaciMap[linija.smene[2]]?.ime || ""} {vozaciMap[linija.smene[2]]?.prezime || ""}
                 </div> 
