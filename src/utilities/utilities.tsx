@@ -1,4 +1,4 @@
-import { DostavnaLinija, Vozac, Vozilo } from "../types";
+import { DostavnaLinija, Izmena, Vozac, Vozilo } from "../types";
 
 interface AktivnaVrednost {
   aktivnaVrednost: string | undefined;
@@ -8,53 +8,90 @@ interface AktivnaVrednost {
 
 export const getDefaultId = (
   linija: DostavnaLinija,
-  target: "vozilo" | "vozac1" | "vozac2"
+  target: "vozilo" | "vozac",
+  smena?: 1|2
 ) => {
-  switch (target) {
-    case "vozilo":
-      return linija.vozilo;
-
-    case "vozac1":
-      return linija.smene[1];
-
-    case "vozac2":
-      return linija.smene[2];
-
-    default:
-      return "";
+  if(target === "vozilo"){
+    return linija.vozilo
+  }else if(target === "vozac" && smena){
+    return linija.smene[smena]
+  }else{
+    return ""
   }
 };
 
-export const getAktivnaVrednost = (
+interface getAktivnaVrednostProperty {
   linija: DostavnaLinija,
-  target: "vozac1" | "vozac2" | "vozilo",
+  target: "vozac" | "vozilo",
   vozilaMap?: Record<string, Vozilo>,
-  vozaciMap?: Record<string, Vozac>
-): AktivnaVrednost => {
-    console.log("linijaaaa",linija)
+  vozaciMap?: Record<string, Vozac>,
+  smena?: 1|2
+}
+
+
+//OVDE POSTOJI PROBLEM!!! MORAŠ NAPRAVITI U FIND FUNKCIJI KOD TRAŽENJA DANAS IZMENA I PERIOD IZMENA, DA LI SPOSTOJI I.SMENA, 
+//Ako postoij to znači da se izmena odnosi na vozača. Možda je bolje promeniti u bazi umesto target: vozač | vozilo, da bude vozac1/vozac2/vozilo
+export const getAktivnaVrednost = ({
+  linija,
+  target,
+  vozilaMap,
+  vozaciMap,
+  smena
+}: getAktivnaVrednostProperty): AktivnaVrednost => {
 
   const today = new Date().toISOString().split("T")[0];
+  let danasIzmena:Izmena|undefined;
+  let periodIzmena:Izmena|undefined;
+  let defaultId:string;
 
-  const danasIzmena = linija.izmene?.find(
+  if(smena){
+    danasIzmena = linija.izmene?.find(
     i =>
+      i.smena === smena &&
       i.target === target &&
       i.tip === "danas" &&
       i.od <= today &&
       i.do >= today
   );
 
-  const periodIzmena = linija.izmene?.find(
+  periodIzmena = linija.izmene?.find(
     i =>
+      i.smena === smena &&
       i.target === target &&
       i.tip === "period" &&
       i.od <= today &&
       i.do >= today
   );
 
-  const defaultId = getDefaultId(
+  defaultId = getDefaultId(
     linija,
-    target
-);
+    target,
+    smena
+  );
+} else{
+    danasIzmena = linija.izmene?.find(
+      i =>
+        i.target === target &&
+        i.tip === "danas" &&
+        i.od <= today &&
+        i.do >= today
+    );
+
+    periodIzmena = linija.izmene?.find(
+      i =>
+        i.target === target &&
+        i.tip === "period" &&
+        i.od <= today &&
+        i.do >= today
+    );
+
+    defaultId = getDefaultId(
+      linija,
+      target
+    );
+  }
+
+
 
   const getNaziv = (id: string) => {
     if (target === "vozilo" && vozilaMap) {
@@ -88,4 +125,15 @@ export const getAktivnaVrednost = (
     defaultVrednost: getNaziv(defaultId),
     izvor: "default"
   };
+};
+
+
+export const formatirajDanMesecTekst = (datum:string) => {
+  if(datum === "danas") return datum;
+  const date = new Date(datum);
+  const dan = date.getDate().toString().padStart(2, '0');
+  const mesec = date.toLocaleString('sr-Latn-RS', { month: 'short' }); // "jun"
+  // ili 'long' za "jun"
+  
+  return `${dan}. ${mesec}`; // "05 jun"
 };

@@ -1,7 +1,8 @@
 import { Link } from "react-router";
 import { useData } from "../context/dataContext";
 import { useEffect, useState } from "react";
-import { getAktivnaVrednost } from "../utilities/utilities";
+import VozilaKomponenta from "../components/vozilaKomponenta";
+import VozacKomponenta from "../components/vozacKomponenta";
 
 export default function ListaDostavnihTura() {
 
@@ -47,6 +48,8 @@ export default function ListaDostavnihTura() {
     setUkupnaFaljenja(faljenja)
   },[manjakVozaca,manjakVozila]) 
 
+
+
   if (loading ) return <p>Učitavanje...</p>
 
   return (
@@ -73,16 +76,9 @@ export default function ListaDostavnihTura() {
                 <h5>Linija {linija.broj}</h5>
                 <div>
                   <strong>Klinike:</strong> {linija.klinike}<br/>
-                  <strong>Vozilo:</strong> 
-                  {
-                    getAktivnaVrednost(linija,"vozilo",vozilaMap).aktivnaVrednost ? 
-                      `${getAktivnaVrednost(linija,"vozilo",vozilaMap).aktivnaVrednost?.toUpperCase()} na zameni do ${getAktivnaVrednost(linija,"vozilo",vozilaMap).izvor}` : 
-                      getAktivnaVrednost(linija,"vozilo",vozilaMap).defaultVrednost?.toUpperCase()
-                  }
-                  <br/>
-                  
-                  <strong>Vozač 1:</strong> {vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}<br/>
-                  <strong>Vozač 2:</strong> {vozaciMap[linija.smene[2]]?.ime || ""} {vozaciMap[linija.smene[2]]?.prezime || ""}
+                  <VozilaKomponenta linija={linija} vozilaMap={vozilaMap}/>
+                  <VozacKomponenta linija={linija} target="vozac" vozaciMap={vozaciMap} smena={1}/>
+                  <VozacKomponenta linija={linija} target="vozac" vozaciMap={vozaciMap} smena={2}/>
                 </div> 
               </div>
             </Link>

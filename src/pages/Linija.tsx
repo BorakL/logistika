@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { useData } from "../context/dataContext";
 import PromeneForm from "../components/promeneForm";
 import { FaHospital } from "react-icons/fa";
+import { formatirajDanMesecTekst, getAktivnaVrednost } from "../utilities/utilities";
 
 
 export default function Linija() {
@@ -29,7 +30,6 @@ export default function Linija() {
 
   const changeDostavnaLinijaVozilo = async (id: string, voziloNaziv:string):Promise<void> => {
     try{
-      console.log("poziva seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
       updateLinija(id, {vozilo: voziloNaziv})
     }catch(error){
       console.log(error)
@@ -64,9 +64,58 @@ export default function Linija() {
                     <div><FaHospital/> {linija.klinike}</div>
                 </div>
                 <div className="mb-3">
-                  <div className="mb-2"><span className="tablice">{vozilaMap[linija.vozilo]?.naziv.toUpperCase()}</span></div>
-                  <div>1 - <b>{vozaciMap[linija.smene[1]]?.ime || ""} {vozaciMap[linija.smene[1]]?.prezime || ""}</b></div>
-                  <div>2 - <b>{vozaciMap[linija.smene[2]]?.ime || ""} {vozaciMap[linija.smene[2]]?.prezime || ""}</b></div>
+                  <div className="mb-2">
+                    <span className="tablice">
+                    {
+                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost ? 
+                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost?.toUpperCase() :
+                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).defaultVrednost?.toUpperCase()
+                    }
+                    </span>
+                    {
+                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost ?
+                      <p>
+                        {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).izvor)}`}
+                        <br/> 
+                        {`Redovno vozilo: ${getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).defaultVrednost?.toUpperCase()}`}
+                      </p>
+                      : null
+                    }
+                  </div>
+                  <div>
+                    <div>
+                      1. {
+                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost ?
+                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost?.toUpperCase() :
+                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).defaultVrednost?.toUpperCase()
+                      }
+                      {
+                      getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost ?
+                      <p>
+                        {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).izvor)}`}
+                        <br/> 
+                        {`Redovno vozi: ${getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).defaultVrednost?.toUpperCase()}`}
+                      </p>
+                      : null
+                    }
+                    </div>
+                    <div>
+                      2. {
+                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost ?
+                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost?.toUpperCase() :
+                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).defaultVrednost?.toUpperCase()
+                        }
+                        {
+                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost ?
+                        <p>
+                          {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).izvor)}`}
+                          <br/> 
+                          {`Redovno vozi: ${getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).defaultVrednost?.toUpperCase()}`}
+                        </p>
+                        : null
+                      }
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mb-2 card p-2">
