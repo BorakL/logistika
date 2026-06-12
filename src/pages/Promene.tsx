@@ -66,6 +66,7 @@ const Izmene = () => {
                     </li>
                 )}
                 </ul>
+                {izmene.length===0 && "Nema izmena"}
             </div>
         </div>
     )

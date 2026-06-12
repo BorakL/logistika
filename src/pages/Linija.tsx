@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router";
 import { useData } from "../context/dataContext";
 import PromeneForm from "../components/promeneForm";
 import { FaHospital } from "react-icons/fa";
-import { formatirajDanMesecTekst, getAktivnaVrednost } from "../utilities/utilities";
+import ZamenaKomponenta from "../components/zamenaKomponenta";
 
 
 export default function Linija() {
@@ -66,55 +66,15 @@ export default function Linija() {
                 </div>
                 <div className="mb-3">
                   <div className="mb-2">
-                    <span className="tablice">
-                    {
-                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost ? 
-                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost?.toUpperCase() :
-                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).defaultVrednost?.toUpperCase()
-                    }
-                    </span>
-                    {
-                      getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).aktivnaVrednost ?
-                      <p>
-                        {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).izvor)}`}
-                        <br/> 
-                        {`Redovno vozilo: ${getAktivnaVrednost({linija,target:"vozilo",vozilaMap}).defaultVrednost?.toUpperCase()}`}
-                      </p>
-                      : null
-                    }
+                    <ZamenaKomponenta linija={linija} vozilaMap={vozilaMap}/>
                   </div>
+                  <hr/>
                   <div>
                     <div>
-                      1. {
-                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost ?
-                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost?.toUpperCase() :
-                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).defaultVrednost?.toUpperCase()
-                      }
-                      {
-                      getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).aktivnaVrednost ?
-                      <p>
-                        {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).izvor)}`}
-                        <br/> 
-                        {`Redovno vozi: ${getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:1}).defaultVrednost?.toUpperCase()}`}
-                      </p>
-                      : null
-                    }
+                      <ZamenaKomponenta linija={linija} vozaciMap={vozaciMap} smena={1} />
                     </div>
                     <div>
-                      2. {
-                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost ?
-                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost?.toUpperCase() :
-                          getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).defaultVrednost?.toUpperCase()
-                        }
-                        {
-                        getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).aktivnaVrednost ?
-                        <p>
-                          {`Zamena do ${formatirajDanMesecTekst(getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).izvor)}`}
-                          <br/> 
-                          {`Redovno vozi: ${getAktivnaVrednost({linija,target:"vozac",vozaciMap,smena:2}).defaultVrednost?.toUpperCase()}`}
-                        </p>
-                        : null
-                      }
+                      <ZamenaKomponenta linija={linija} vozaciMap={vozaciMap} smena={2} />
                     </div>
                   </div>
                 </div>
