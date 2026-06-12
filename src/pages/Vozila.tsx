@@ -75,7 +75,7 @@ const Vozila = () => {
                             className="list-group-item d-flex justify-content-between align-items-center" 
                             key={vozilo.id}
                         >
-                            <div className="me-3">{vozilo.naziv.toUpperCase()}</div>
+                            <div className="me-3"> {vozilo.naziv.toUpperCase()} </div>
                             <button 
                                 className="btn btn-sm btn-outline-danger"
                                 onClick={() => removeVoziloHandler(vozilo.id, vozilo.naziv)}

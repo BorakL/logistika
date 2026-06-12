@@ -7,6 +7,7 @@ import Linija from './pages/Linija'
 import NovaLinija from './pages/NovaLinija'
 import NavBar from './components/navbar'
 import AdminPanel from './pages/AdminPanel'
+import Promene from './pages/Promene'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/adminPanel" element={<AdminPanel/>}/>
       <Route path="/novaLinija" element={<NovaLinija/>}/>
       <Route path="/linije/:id" element={<Linija/>}/>
+      <Route path="/izmene/:id" element={<Promene/>}/>
     </Routes>
     </>
   )

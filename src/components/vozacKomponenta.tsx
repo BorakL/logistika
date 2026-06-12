@@ -24,13 +24,13 @@ const VozacKomponenta = ({linija, target, vozaciMap, detailed, smena}: VozaciKom
         {
             !detailed ?
             <div>
-                <strong>Vozac ${smena}: </strong> {vozacDisplay}
+                <strong>Vozac {smena}: </strong> {vozacDisplay}
                 <br/>
             </div>
             :
             aktivnaVrednost ? (
                 <div className="mb-2">
-                    <strong>Vozac ${smena}: </strong> {aktivnaVrednost?.toUpperCase()}
+                    <strong>Vozac {smena}: </strong> {aktivnaVrednost?.toUpperCase()}
                     <p>Zamena do {izvor}</p>
                     <p>Redovan vozač - {defaultVrednost?.toUpperCase()}</p>
                 </div>

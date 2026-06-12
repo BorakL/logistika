@@ -36,6 +36,7 @@ export interface NovaLinijaFormValues {
 }
 
 export interface Izmena {
+  id:string,
   tip: "stalno"|"danas"|"period",
   vrednostId: string,
   target: "vozac"|"vozilo",

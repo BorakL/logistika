@@ -30,6 +30,7 @@ const PromeneForm: React.FC<PromeneFormProps> = ({vozaci, vozila, target, linija
             
             const activeIzmene = linija?.izmene.filter(izmena => izmena.do >= today) || []
             const izmena: Izmena = {
+                id: Date(),
                 tip: promena.tip, 
                 vrednostId: promena.vrednostId,
                 target,

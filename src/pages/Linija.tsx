@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useData } from "../context/dataContext";
 import PromeneForm from "../components/promeneForm";
 import { FaHospital } from "react-icons/fa";
@@ -17,6 +17,7 @@ export default function Linija() {
   } = useData();
 
   const linija = linije.find(l => l.id===id);
+  const navigate = useNavigate();
 
   const changeDostavnaLinijaVozac = async (id: string, vozacId:string, shift:1|2|undefined):Promise<void>  => {
     try{
@@ -188,7 +189,13 @@ export default function Linija() {
                     />
                   </div>
                 </div>
-
+                
+                <div className="mt-3">
+                      <button onClick={()=>navigate(`/izmene/${id}`) }>
+                        Proveri izmene
+                      </button>
+                </div>
+              
               </div>
             </div>
           </div>
